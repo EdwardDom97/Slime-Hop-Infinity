@@ -59,27 +59,41 @@ gameover_art = pygame.image.load('graphics/gameoverdisplay.png')
 
 
 
+#BUTTONS
+
 #this will be the first button introduced into the game, previous version relied on pressing the up arrow to start via text-prompt
+#here I am going to add in a few more buttons like controls, exit, options, and maybe something like highscores.
+#play game button
 play_game_button = pygame.image.load('graphics/playbutton.png')
 play_game_button_rect = play_game_button.get_rect(topleft=(100, 500))
 
+#controls button
+controls_button = pygame.image.load('graphics/controlsbutton.png')
+controls_button_rect = controls_button.get_rect(topleft=(100, 600))
 
-#here I am going to add in a few more buttons like controls, exit, options, and maybe something like highscores.
+#exit game button
 exit_game_button = pygame.image.load('graphics/exitbutton.png')
-exit_game_button_rect = exit_game_button.get_rect(topleft=(100, 600))
-
-
-
+exit_game_button_rect = exit_game_button.get_rect(topleft=(100, 700))
 
 #here I am adding a menu display to be used inside of the game state to return to the main menu, will also be including a menu button
 menu_display = pygame.image.load('graphics/gamemenudisp.png')
 menu_display_rect = menu_display.get_rect(center = (window_width/2, window_height/2))
 
-
+#Menu button from in-game
 menu_button = pygame.image.load('graphics/menubutton.png')
 menu_button_rect = menu_button.get_rect(center = (window_width/2, window_height/2))
 #here is a controlling variable for the menu which will toggle/bind it to the escape key
 show_menu_display = False
+
+
+#tutorial button from main menu
+tutorial_display = pygame.image.load('graphics/tutorialdisplay.png')
+tutorial_display_rect = tutorial_display.get_rect(center = (window_width/2, window_height/2))
+#toggles the tutorial window on/off
+show_tutorial_display = False
+
+#END OF BUTTONS
+
 
 
 #here I am going to establish a basic font type and introduce a player health and a player score displays
@@ -205,6 +219,7 @@ earthslime_rect_list = []
 enemy_earthslime_speed = 3
 current_earthslime_spawn_time = 0
 
+
 # Define minimum and maximum spawn time for enemy earth slimes
 min_spawn_time = 2000  # 2 seconds
 max_spawn_time = 11000  # 11 seconds
@@ -243,6 +258,12 @@ while True:
                     if exit_game_button_rect.collidepoint(event.pos):
                         pygame.quit()
                         sys.exit()
+
+
+                    if controls_button_rect.collidepoint(event.pos):
+                        show_tutorial_display = not show_tutorial_display
+
+
 
 
 
@@ -349,8 +370,12 @@ while True:
 
         #gamesong.play()
 
+        #sets the ingame display menu to false after returning to the menu state from the game state
         show_menu_display = False
        
+
+
+
 
         # Menu state logic
         pass
@@ -359,6 +384,8 @@ while True:
 
     #this will be the game logic state
     if current_state == GAME:
+
+        show_tutorial_display = False
         # game state logic
 
 
@@ -429,8 +456,23 @@ while True:
         #this displays the play button onto the menu screen
         screen.blit(play_game_button, play_game_button_rect)
 
+
+        #this will display the controls button
+        screen.blit(controls_button, controls_button_rect)
+
+
+        if show_tutorial_display:
+            #earthslime_rect_list.clear()   #clears the screen in prep for the menu state, might keep it this way for awhile because I like it... kinda.
+              # Adjust frame rate to pause the game
+            screen.blit(tutorial_display, tutorial_display_rect)
+            
+
+
         #this displays the exit button onto the menu screen
         screen.blit(exit_game_button, exit_game_button_rect)
+
+
+
 
       
 
