@@ -26,27 +26,24 @@ import sys
 import random  # Import the random module
 
 
-
 # Initialize the pygame library
 pygame.init()
-
 
 
 # Set the window title
 pygame.display.set_caption("Slime Hop Inifinity    Version 0.0.3       03/25/2024          Tristan Dombroski")
 
 
-
 # Set up the window dimensions
 window_width = 1600
 window_height = 900
+
 
 #the variable which will take the window_width = 1600, window_height = 900 variables and stores them for the next code bit.
 window_size = (window_width, window_height)
 
 # Create the window
 screen = pygame.display.set_mode(window_size)
-
 
 #this is going to be the splash art for the main screen
 menu_art = pygame.image.load('graphics/newmenu.png')
@@ -58,18 +55,25 @@ ingame_art = pygame.image.load('graphics/newsky.png')
 gameover_art = pygame.image.load('graphics/gameoverdisplay.png')
 
 
-
 #BUTTONS
 
 #this will be the first button introduced into the game, previous version relied on pressing the up arrow to start via text-prompt
 #here I am going to add in a few more buttons like controls, exit, options, and maybe something like highscores.
 #play game button
 play_game_button = pygame.image.load('graphics/playbutton.png')
-play_game_button_rect = play_game_button.get_rect(topleft=(100, 500))
+play_game_button_rect = play_game_button.get_rect(topleft=(100, 300))
+
+#adding in a character button to see how it looks
+select_character_button = pygame.image.load('graphics/selectcharacterbutton.png')
+select_character_button_rect = select_character_button.get_rect(topleft=(100, 400))
 
 #controls button
 controls_button = pygame.image.load('graphics/controlsbutton.png')
-controls_button_rect = controls_button.get_rect(topleft=(100, 600))
+controls_button_rect = controls_button.get_rect(topleft=(100, 500))
+
+#options button
+options_button = pygame.image.load('graphics/optionsbutton.png')
+options_button_rect = options_button.get_rect(topleft=(100, 600))
 
 #exit game button
 exit_game_button = pygame.image.load('graphics/exitbutton.png')
@@ -85,7 +89,6 @@ menu_button_rect = menu_button.get_rect(center = (window_width/2, window_height/
 #here is a controlling variable for the menu which will toggle/bind it to the escape key
 show_menu_display = False
 
-
 #tutorial button from main menu
 tutorial_display = pygame.image.load('graphics/tutorialdisplay.png')
 tutorial_display_rect = tutorial_display.get_rect(center = (window_width/2, window_height/2))
@@ -96,9 +99,11 @@ show_tutorial_display = False
 
 
 
+
 #here I am going to establish a basic font type and introduce a player health and a player score displays
 # Define font variables
 game_font = pygame.font.SysFont(None, 54)  # Choose the font type and size
+
 
 
 #THIS IS THE ENVIRONMENT VARIABLES
@@ -148,8 +153,17 @@ player_jump_image_01 = pygame.image.load('graphics/player/playerjump01.png')
 player_jump_image_02 = pygame.image.load('graphics/player/playerjump02.png')
 
 
+#this will be the image displayed at the top left to represent the player's health
 player_healthbar_display = pygame.image.load('graphics/player/playerhealthbardisplay.png')
 player_healthbar_display_rect = player_healthbar_display.get_rect(topleft=(50,100))
+
+#this chunk is dedicated to drawing a green rectangle over the player healthbar visual to represent the current health
+current_healthbar_width = 32
+current_healthbar_height = 100
+current_healthbar_color = (20, 220, 85)
+
+current_healthbar_rect = pygame.Rect(player_healthbar_display_rect.x, player_healthbar_display_rect.y + 64, current_healthbar_width, current_healthbar_height)
+
 
 
 
@@ -180,6 +194,7 @@ player_health = 5
 # Constants for game states (pulled from cape castsea The Ruins)
 
 MENU = 'MENU'
+CHARACTER = 'CHARACTER'
 GAME = 'GAME'
 GAMEOVER = 'GAMEOVER'
 OPTIONS = 'OPTIONS'
@@ -188,8 +203,6 @@ OPTIONS = 'OPTIONS'
 
 # Variable to track current game state
 current_state = MENU  # Start with the menu state
-
-
 
 
 
@@ -250,21 +263,37 @@ while True:
 
                 #handles the mouse button down events during the MENU state
                 if current_state == MENU:
+
+                    #this is the play button's logic in the menu state
                     if play_game_button_rect.collidepoint(event.pos):
                         gamesong.stop()
                         current_state = GAME
 
+                    #this is the select character button's logic in the menu state
+                    if select_character_button_rect.collidepoint(event.pos):
+                        gamesong.stop()
+                        current_state = CHARACTER
 
+                    #this is the options button's logic in the menu state
+                    if options_button_rect.collidepoint(event.pos):
+                        current_state = OPTIONS
+
+                    
+                    #this is the controls button's logic in the menu state
+                    if controls_button_rect.collidepoint(event.pos):
+                        show_tutorial_display = not show_tutorial_display
+                    
+                    #this is the exit button's logic in the menu state
                     if exit_game_button_rect.collidepoint(event.pos):
                         pygame.quit()
                         sys.exit()
 
 
-                    if controls_button_rect.collidepoint(event.pos):
-                        show_tutorial_display = not show_tutorial_display
 
-
-
+                if current_state == CHARACTER:
+                    if menu_button_rect.collidepoint(event.pos):
+                        #this is where I am trtying to clear the game screen when returning to the menu
+                        current_state = MENU
 
 
                 #handles the mouse button down events during the GAME state
@@ -273,6 +302,12 @@ while True:
                         #this is where I am trtying to clear the game screen when returning to the menu
                         current_state = MENU
 
+
+
+                if current_state == OPTIONS:
+                    if menu_button_rect.collidepoint(event.pos):
+                        #this is where I am trtying to clear the game screen when returning to the menu
+                        current_state = MENU
 
 
 
@@ -362,9 +397,6 @@ while True:
 
 
 
-
-
-
     #This will be the menu logic state
     if current_state == MENU:
 
@@ -376,9 +408,26 @@ while True:
 
 
 
-
         # Menu state logic
         pass
+
+
+
+
+    #this will be the character selection logic state
+    if current_state == CHARACTER:
+
+        #gamesong.play()
+
+        #sets the ingame display menu to false after visiting the character state from the menu state
+        show_menu_display = False
+       
+
+
+
+        # Character state logic
+        pass
+
 
 
 
@@ -408,7 +457,6 @@ while True:
 
 
 
-
     #options logic start
     if current_state == OPTIONS:
        
@@ -422,8 +470,9 @@ while True:
 
 
 
-    #LOGIC ABOVE THIS LINE RENDERING BELOW THIS LINE
 
+
+    #LOGIC ABOVE THIS LINE RENDERING BELOW THIS LINE
 
 
 
@@ -446,19 +495,32 @@ while True:
 
 
 
-
-
         # Fill the screen with a color (e.g., white) (RED, GREEN, BLUE)
         #(155, 155, 155) GRAY
         #blits the screen art I designed into the mene or as the menu's background
         screen.blit(menu_art, (0, 0))
 
-        #this displays the play button onto the menu screen
+
+        #Rendering BUTTONS onto the MENU State
+        #play button 
         screen.blit(play_game_button, play_game_button_rect)
 
-
-        #this will display the controls button
+        #character button
+        screen.blit(select_character_button, select_character_button_rect)
+        
+        #controls button
         screen.blit(controls_button, controls_button_rect)
+
+        #options button
+        screen.blit(options_button, options_button_rect)
+
+        #exit button
+        screen.blit(exit_game_button, exit_game_button_rect)
+
+        #End of rendering BUTTONS 
+
+
+
 
 
         if show_tutorial_display:
@@ -468,17 +530,29 @@ while True:
             
 
 
-        #this displays the exit button onto the menu screen
-        screen.blit(exit_game_button, exit_game_button_rect)
+        
 
-
-
-
-      
 
         pass
 
     #end of menu state rendering
+
+
+
+    #options state rendering
+    elif current_state == CHARACTER:
+
+        #fills gray
+        screen.fill((155, 155, 155))
+
+        #displays the menu button
+        screen.blit(menu_button, menu_button_rect)
+
+        pass
+
+
+
+    #end of options state rendering
 
 
 
@@ -494,12 +568,12 @@ while True:
 
 
         #Check if the maximum number of enemy earth slimes has been reached
-
         current_earthslime_spawn_time += 100 
 
 
         #fills the screen with a blank gray color for now
         screen.fill((155, 155, 155))
+
 
         screen.blit(ingame_art, (0, 0))
 
@@ -543,9 +617,18 @@ while True:
         #load the player healthbar display
         screen.blit(player_healthbar_display, player_healthbar_display_rect)
 
+        # Update the green health bar height based on the player's health
+        #current_healthbar_rect.height = player_health * 20
+
+        # Calculate the height of the green health bar based on the player's health
+        current_healthbar_rect.height = int((player_health / 5 ) * current_healthbar_height)
+
+        # Calculate the y-position of the health bar based on the remaining health
+        current_healthbar_rect.y = player_healthbar_display_rect.y + (current_healthbar_height - current_healthbar_rect.height) + 32
 
 
         #here I want to draw a green rectangle over the player healthbar display to serve as an active or current health. providing a visual and textual display
+        pygame.draw.rect(screen,  current_healthbar_color,  current_healthbar_rect)
 
 
 
@@ -704,10 +787,15 @@ while True:
 
 
 
+
     #options state rendering
     elif current_state == OPTIONS:
 
+        #fills gray
         screen.fill((155, 155, 155))
+
+        #displays the menu buttons for now
+        screen.blit(menu_button, menu_button_rect)
 
         pass
 
