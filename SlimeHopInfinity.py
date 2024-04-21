@@ -267,6 +267,7 @@ while True:
                     #this is the play button's logic in the menu state
                     if play_game_button_rect.collidepoint(event.pos):
                         gamesong.stop()
+                        menusong.stop()
                         current_state = GAME
 
                     #this is the select character button's logic in the menu state
@@ -400,7 +401,9 @@ while True:
     #This will be the menu logic state
     if current_state == MENU:
 
-        #gamesong.play()
+
+        #This controls the music being played ingame during the menu, character, and options state
+        #menusong.play()
 
         #sets the ingame display menu to false after returning to the menu state from the game state
         show_menu_display = False
@@ -417,7 +420,7 @@ while True:
     #this will be the character selection logic state
     if current_state == CHARACTER:
 
-        #gamesong.play()
+        
 
         #sets the ingame display menu to false after visiting the character state from the menu state
         show_menu_display = False
