@@ -32,7 +32,7 @@ pygame.init()
 
 
 # Set the window title
-pygame.display.set_caption("Slime Hop Inifinity    Version 0.0.3       03/25/2024          Tristan Dombroski")
+pygame.display.set_caption("Slime Hop Inifinity              Version 0.4 'Fighting Back Update'              04/21/2024 Tristan Dombroski")
 
 
 # Set up the window dimensions
@@ -246,7 +246,13 @@ player_health = 5
 
 #shooting
 # Projectile setup
+#treddo's fireball
 fireball_image = pygame.image.load('graphics/fireball.png')
+
+#rose's watershot
+watershot_image = pygame.image.load('graphics/watershot.png')
+
+
 fireball_rect = None
 #fireball_rect = fireball_image.get_rect()
 
@@ -538,7 +544,7 @@ while True:
             current_time = pygame.time.get_ticks()
 
 
-            fireball_rect = fireball_image.get_rect()
+            fireball_rect = watershot_image.get_rect()
             fireball_rect.center = rose_image_rect.center
 
             #grabs the current position of the mouse
@@ -739,6 +745,10 @@ while True:
         #removes blitting the slimes on the screen during the menu phase
         #earthslime_rect_list.remove(slime_rect)
         earthslime_rect_list.clear()
+
+
+        #clears the projectiles shot during the GAME state
+        fireballs.clear()
 
         #reset the players position, score, and health in game through the menu
         #treddo_image_rect.bottomleft = (0, window_height - tile_size)
@@ -1012,7 +1022,10 @@ while True:
             fireball_rect.y += direction[1] * fireball_speed
 
             #render the fireball
-            screen.blit(fireball_image, fireball_rect)
+            if selected_player == "Treddo":
+                screen.blit(fireball_image, fireball_rect)
+            if selected_player == "Rose":
+                screen.blit(watershot_image, fireball_rect)
 
         
             
