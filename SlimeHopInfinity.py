@@ -23,6 +23,7 @@
 #I begin by loading the libraries I am going to need for my program to run. 
 import pygame
 import sys
+import math
 import random  # Import the random module
 
 
@@ -54,6 +55,11 @@ ingame_art = pygame.image.load('graphics/newsky.png')
 #adding this image to serve as a game over screen
 gameover_art = pygame.image.load('graphics/gameoverdisplay.png')
 
+#ingame art for the character slecetion/creation screen
+character_art_background = pygame.image.load('graphics/Character/background.png')
+
+
+
 
 #BUTTONS
 
@@ -79,23 +85,49 @@ options_button_rect = options_button.get_rect(topleft=(100, 600))
 exit_game_button = pygame.image.load('graphics/exitbutton.png')
 exit_game_button_rect = exit_game_button.get_rect(topleft=(100, 700))
 
-#here I am adding a menu display to be used inside of the game state to return to the main menu, will also be including a menu button
-menu_display = pygame.image.load('graphics/gamemenudisp.png')
-menu_display_rect = menu_display.get_rect(center = (window_width/2, window_height/2))
-
 #Menu button from in-game
 menu_button = pygame.image.load('graphics/menubutton.png')
 menu_button_rect = menu_button.get_rect(center = (window_width/2, window_height/2))
 #here is a controlling variable for the menu which will toggle/bind it to the escape key
 show_menu_display = False
 
-#tutorial button from main menu
+#here I am adding a menu display to be used inside of the game state to return to the main menu, will also be including a menu button
+menu_display = pygame.image.load('graphics/gamemenudisp.png')
+menu_display_rect = menu_display.get_rect(center = (window_width/2, window_height/2))
+
+#tutorial display from main menu
 tutorial_display = pygame.image.load('graphics/tutorialdisplay.png')
 tutorial_display_rect = tutorial_display.get_rect(center = (window_width/2, window_height/2))
 #toggles the tutorial window on/off
 show_tutorial_display = False
 
 #END OF BUTTONS
+
+
+
+
+#Start of graphics displayed inside of CHARACTER state
+
+#this is the background or display the characters and buttons will appear on in the CHAR state.
+characters_window = pygame.image.load('graphics/Character/character_select_display.png')
+characters_window_rect = characters_window.get_rect(center = (window_width/2, window_height/2))
+
+#this is the first character, treddo
+player_treddo_icon = pygame.image.load('graphics/Character/treddo_icon.png')
+player_treddo_icon_rect = player_treddo_icon.get_rect(topleft = (500, 600))
+
+#this is the second character, rose
+player_rose_icon = pygame.image.load('graphics/Character/rose_icon.png')
+player_rose_icon_rect = player_rose_icon.get_rect(topleft = (600, 600))
+
+#this variable sets the selected character default to None.
+selected_player = None
+
+#sets the character's name to blank pulled from slime ranger
+#character_name = ''
+
+
+#end of graphics displayed inside of CHARACTER state
 
 
 
@@ -129,32 +161,54 @@ menusong.set_volume(0.4)
 gamesong = pygame.mixer.Sound('sounds/harploopforshi.wav')
 gamesong .set_volume(0.4)
 
-#END OF LOADING GAME SOUNDS
-
-
-
-#THIS IS THE PLAYER RELATED VARIABLES
-player_image = pygame.image.load('graphics/player/treddo.png')
-player_image_rect = player_image.get_rect(center=(50,800))
-# Update the player position based on ground position
-player_image_rect.bottomleft = (0, window_height - tile_size)
-
 #player sounds
 jump_sound = pygame.mixer.Sound('sounds/jump.wav')
 # Set the volume of the jump sound to a lower value
 jump_sound.set_volume(0.2)  # Adjust the volume as needed (0.0 to 1.0)
 
-#images to use for the player walk animation
-player_walk_image_01 = pygame.image.load('graphics/player/rightwalk01.png')
-player_walk_image_02 = pygame.image.load('graphics/player/rightwalk02.png')
-player_walk_image_03 = pygame.image.load('graphics/player/leftwalk01.png')
-player_walk_image_04 = pygame.image.load('graphics/player/leftwalk02.png')
-player_jump_image_01 = pygame.image.load('graphics/player/playerjump01.png')
-player_jump_image_02 = pygame.image.load('graphics/player/playerjump02.png')
+
+#END OF LOADING GAME SOUNDS
+
+
+
+#THIS IS THE PLAYER RELATED VARIABLES
+
+#this is the first playable character TREDDO
+treddo_image = pygame.image.load('graphics/players/treddo/treddo.png')
+treddo_image_rect = treddo_image.get_rect(center=(50,800))
+# Update the player position based on ground position
+treddo_image_rect.bottomleft = (0, window_height - tile_size)
+
+
+#images to use for the player  TREDDO walk animation
+treddo_walk_image_01 = pygame.image.load('graphics/players/treddo/rightwalk01.png')
+treddo_walk_image_02 = pygame.image.load('graphics/players/treddo/rightwalk02.png')
+treddo_walk_image_03 = pygame.image.load('graphics/players/treddo/leftwalk01.png')
+treddo_walk_image_04 = pygame.image.load('graphics/players/treddo/leftwalk02.png')
+treddo_jump_image_01 = pygame.image.load('graphics/players/treddo/playerjump01.png')
+treddo_jump_image_02 = pygame.image.load('graphics/players/treddo/playerjump02.png')
+
+
+
+#this is the first playable character ROSE
+rose_image = pygame.image.load('graphics/players/rose/rose.png')
+rose_image_rect = rose_image.get_rect(center=(50,800))
+# Update the player position based on ground position
+rose_image_rect.bottomleft = (0, window_height - tile_size)
+
+#images to use for the player  TREDDO walk animation
+rose_walk_image_01 = pygame.image.load('graphics/players/rose/rightwalk01.png')
+rose_walk_image_02 = pygame.image.load('graphics/players/rose/rightwalk02.png')
+rose_walk_image_03 = pygame.image.load('graphics/players/rose/leftwalk01.png')
+rose_walk_image_04 = pygame.image.load('graphics/players/rose/leftwalk02.png')
+rose_jump_image_01 = pygame.image.load('graphics/players/rose/playerjump01.png')
+rose_jump_image_02 = pygame.image.load('graphics/players/rose/playerjump02.png')
+
+
 
 
 #this will be the image displayed at the top left to represent the player's health
-player_healthbar_display = pygame.image.load('graphics/player/playerhealthbardisplay.png')
+player_healthbar_display = pygame.image.load('graphics/players/playerhealthbardisplay.png')
 player_healthbar_display_rect = player_healthbar_display.get_rect(topleft=(50,100))
 
 #this chunk is dedicated to drawing a green rectangle over the player healthbar visual to represent the current health
@@ -187,6 +241,20 @@ player_health = 5
 
 #END OF PLAYER VARIABLES
 
+
+
+
+#shooting
+# Projectile setup
+fireball_image = pygame.image.load('graphics/fireball.png')
+fireball_rect = None
+#fireball_rect = fireball_image.get_rect()
+
+# Additional variable for firing cooldown
+can_fire = False
+fireball_damage = 3
+fireball_speed = 4
+fireballs = []
 
 
 
@@ -290,24 +358,38 @@ while True:
                         sys.exit()
 
 
-
+                #this is the CHARACTER logic state
                 if current_state == CHARACTER:
+
+                    #this checks if the menu button is pressed inside of the CHARACTER state and returns the user to the menu
                     if menu_button_rect.collidepoint(event.pos):
-                        #this is where I am trtying to clear the game screen when returning to the menu
                         current_state = MENU
+
+                    #this button checks to see if the player presses play game and enters the user into the GAME state
+                    if play_game_button_rect.collidepoint(event.pos):
+                        current_state = GAME
+
+
+
+                    #this checks if the treddo icon is clicked and sets the variable selected player to treddo, which will determine animation and attack
+                    if player_treddo_icon_rect.collidepoint(event.pos):
+                        selected_player = 'Treddo'
+
+                    if player_rose_icon_rect.collidepoint(event.pos):
+                        selected_player = 'Rose'
 
 
                 #handles the mouse button down events during the GAME state
                 if current_state == GAME:
                     if menu_button_rect.collidepoint(event.pos):
-                        #this is where I am trtying to clear the game screen when returning to the menu
+                        
                         current_state = MENU
 
 
 
                 if current_state == OPTIONS:
                     if menu_button_rect.collidepoint(event.pos):
-                        #this is where I am trtying to clear the game screen when returning to the menu
+                        
                         current_state = MENU
 
 
@@ -329,72 +411,237 @@ while True:
                 if current_state == GAME:
                     show_menu_display = not show_menu_display
 
+            if event.key == pygame.K_SPACE:
+                can_fire = True
+
          
 
     # Get the state of all keyboard keys
     keys = pygame.key.get_pressed()
     # Update player position based on keys being held down
-   
 
-    if keys[pygame.K_w] and not player_jumping:
-        player_score += 1
-        jump_sound.play()
-        player_velocity = -player_jump_height
-        player_jumping = True
+   #TREDDO LOGIC AND ANIMATION
+    if selected_player == "Treddo":
 
 
-      
-    if keys[pygame.K_s]:
-        player_image_rect.y += player_speed
+        #SHOOTING LOGIC FOR BOTH PLAYERS FOR THE TIME BEING PULLED FROM SNOWMANIA
+        if keys[pygame.K_SPACE] and can_fire: #this section handles the event spacebar being pressed and contains the necessary elements for a basic shooting function with math. (aims for mouse_pos)
+         
+        
+           
+            current_time = pygame.time.get_ticks()
 
 
-    if keys[pygame.K_a]:
-        player_image_rect.x -= player_speed
+            fireball_rect = fireball_image.get_rect()
+            fireball_rect.center = treddo_image_rect.center
 
-        # Increment animation timer
-        animation_timer += 1
-        if animation_timer >= animation_delay:
-            # Switch between the two walking images
-            player_image = player_walk_image_03 if player_image == player_walk_image_04 else player_walk_image_04
-            animation_timer = 0  # Reset the timer
+            #grabs the current position of the mouse
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            
+            # Calculate the direction from player to mouse
+            direction_x = mouse_x - fireball_rect.centerx
+            direction_y = mouse_y - fireball_rect.centery
 
+            # Normalize the direction vector #thanks to chat gpt honestly, I dont know the logic behind this
+            magnitude = math.sqrt(direction_x ** 2 + direction_y ** 2)
+            direction = (direction_x / magnitude, direction_y / magnitude)
+                  
+                    
+            # Adjust the position and speed based on the direction
+            fireball_rect.x += direction[0] * fireball_speed
+            fireball_rect.y += direction[1] * fireball_speed
 
-    if keys[pygame.K_d]:
-        player_image_rect.x += player_speed
+            fireballs.append((fireball_rect, direction))
 
-        # Increment animation timer
-        animation_timer += 1
-        if animation_timer >= animation_delay:
-            # Switch between the two walking images
-            player_image = player_walk_image_01 if player_image == player_walk_image_02 else player_walk_image_02
-            animation_timer = 0  # Reset the timer
+            # Remove fireballs that go off-screen
+            fireballs = [(rect, direction) for rect, direction in fireballs if screen.get_rect().colliderect(rect)]
 
+            fireball_cooldown = current_time
 
+            can_fire = False
 
-    # Ensure player stays within the window boundaries
-    player_image_rect.x = max(0, min(player_image_rect.x, window_width - player_image_rect.width))
-    player_image_rect.y = max(0, min(player_image_rect.y, window_height - player_image_rect.height))
+            
 
-
-
-
-    # Apply gravity
-    if player_jumping:
-        player_velocity += gravity
-        player_velocity = min(player_velocity, max_fall_speed)  # Cap falling speed
-        player_image_rect.y += player_velocity
-
-    # Check collision with ground
-    if player_image_rect.bottom >= window_height - tile_size:
-        player_image_rect.bottom = window_height - tile_size
-        player_jumping = False
-        player_velocity = 0
+            
 
 
 
 
-   
+        if keys[pygame.K_w] and not player_jumping:
+            player_score += 1
+            jump_sound.play()
+            player_velocity = -player_jump_height
+            player_jumping = True
 
+
+        
+        if keys[pygame.K_s]:
+            treddo_image_rect.y += player_speed
+
+
+        if keys[pygame.K_a]:
+            treddo_image_rect.x -= player_speed
+
+            # Increment animation timer
+            animation_timer += 1
+            if animation_timer >= animation_delay:
+                # Switch between the two walking images
+                treddo_image = treddo_walk_image_03 if treddo_image == treddo_walk_image_04 else treddo_walk_image_04
+                animation_timer = 0  # Reset the timer
+
+
+        if keys[pygame.K_d]:
+            treddo_image_rect.x += player_speed
+
+            # Increment animation timer
+            animation_timer += 1
+            if animation_timer >= animation_delay:
+                # Switch between the two walking images
+                treddo_image = treddo_walk_image_01 if treddo_image == treddo_walk_image_02 else treddo_walk_image_02
+                animation_timer = 0  # Reset the timer
+
+
+
+        # Ensure player stays within the window boundaries
+        if selected_player == 'Treddo':
+            treddo_image_rect.x = max(0, min(treddo_image_rect.x, window_width - treddo_image_rect.width))
+            treddo_image_rect.y = max(0, min(treddo_image_rect.y, window_height - treddo_image_rect.height))
+
+
+
+
+        # Apply gravity
+        if player_jumping:
+            player_velocity += gravity
+            player_velocity = min(player_velocity, max_fall_speed)  # Cap falling speed
+            treddo_image_rect.y += player_velocity
+
+        # Check collision with ground
+        if treddo_image_rect.bottom >= window_height - tile_size:
+            treddo_image_rect.bottom = window_height - tile_size
+            player_jumping = False
+            player_velocity = 0
+
+
+    #END OF TREDDO LOGIC MOVEMENT AND ANIMATION
+
+
+    #ROSE LOGIC AND ANIMATION
+    if selected_player == "Rose":
+
+
+        #SHOOTING LOGIC FOR BOTH PLAYERS FOR THE TIME BEING PULLED FROM SNOWMANIA
+        if keys[pygame.K_SPACE] and can_fire: #this section handles the event spacebar being pressed and contains the necessary elements for a basic shooting function with math. (aims for mouse_pos)
+         
+        
+           
+            current_time = pygame.time.get_ticks()
+
+
+            fireball_rect = fireball_image.get_rect()
+            fireball_rect.center = rose_image_rect.center
+
+            #grabs the current position of the mouse
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            
+            # Calculate the direction from player to mouse
+            direction_x = mouse_x - fireball_rect.centerx
+            direction_y = mouse_y - fireball_rect.centery
+
+            # Normalize the direction vector #thanks to chat gpt honestly, I dont know the logic behind this
+            magnitude = math.sqrt(direction_x ** 2 + direction_y ** 2)
+            direction = (direction_x / magnitude, direction_y / magnitude)
+                  
+                    
+            # Adjust the position and speed based on the direction
+            fireball_rect.x += direction[0] * fireball_speed
+            fireball_rect.y += direction[1] * fireball_speed
+
+            fireballs.append((fireball_rect, direction))
+
+            # Remove fireballs that go off-screen
+            fireballs = [(rect, direction) for rect, direction in fireballs if screen.get_rect().colliderect(rect)]
+
+            fireball_cooldown = current_time
+
+            can_fire = False
+
+            
+
+
+
+
+
+        if keys[pygame.K_w] and not player_jumping:
+            player_score += 1
+            jump_sound.play()
+            player_velocity = -player_jump_height
+            player_jumping = True
+
+
+        
+        if keys[pygame.K_s]:
+            rose_image_rect.y += player_speed
+
+
+        if keys[pygame.K_a]:
+            rose_image_rect.x -= player_speed
+
+            # Increment animation timer
+            animation_timer += 1
+            if animation_timer >= animation_delay:
+                # Switch between the two walking images
+                rose_image = rose_walk_image_03 if rose_image == rose_walk_image_04 else rose_walk_image_04
+                animation_timer = 0  # Reset the timer
+
+
+        if keys[pygame.K_d]:
+            rose_image_rect.x += player_speed
+
+            # Increment animation timer
+            animation_timer += 1
+            if animation_timer >= animation_delay:
+                # Switch between the two walking images
+                rose_image = rose_walk_image_01 if rose_image == rose_walk_image_02 else rose_walk_image_02
+                animation_timer = 0  # Reset the timer
+
+
+
+        # Ensure player stays within the window boundaries
+        if selected_player == 'Rose':
+            rose_image_rect.x = max(0, min(rose_image_rect.x, window_width - rose_image_rect.width))
+            rose_image_rect.y = max(0, min(rose_image_rect.y, window_height - rose_image_rect.height))
+
+
+
+
+        # Apply gravity
+        if player_jumping:
+            player_velocity += gravity
+            player_velocity = min(player_velocity, max_fall_speed)  # Cap falling speed
+            rose_image_rect.y += player_velocity
+
+        # Check collision with ground
+        if rose_image_rect.bottom >= window_height - tile_size:
+            rose_image_rect.bottom = window_height - tile_size
+            player_jumping = False
+            player_velocity = 0
+
+   #END OF ROSE LOGIC AND ANIMATION
+
+
+
+        
+       
+        
+    for fireball_rect, direction in fireballs.copy():
+        for slime_rect in earthslime_rect_list:
+            if slime_rect.colliderect(fireball_rect):
+                player_score += 2
+                fireballs.remove((fireball_rect, direction))
+                earthslime_rect_list.remove(slime_rect)
+                current_enemy_earthslimes -= 1    
+       
 
 
 
@@ -494,7 +741,7 @@ while True:
         earthslime_rect_list.clear()
 
         #reset the players position, score, and health in game through the menu
-        player_image_rect.bottomleft = (0, window_height - tile_size)
+        #treddo_image_rect.bottomleft = (0, window_height - tile_size)
 
 
 
@@ -542,20 +789,52 @@ while True:
 
 
 
-    #options state rendering
+
+
+    #CHARACTER state rendering
     elif current_state == CHARACTER:
 
         #fills gray
         screen.fill((155, 155, 155))
 
+
+        #blits the screen art I designed into the mene or as the menu's background
+        screen.blit(character_art_background, (0, 0))
+
+
+        #blits/displays the character selection window
+        screen.blit(characters_window, characters_window_rect)
+
+
+        #displays the first character
+        screen.blit(player_treddo_icon, player_treddo_icon_rect)
+
+        #displays the second character
+        screen.blit(player_rose_icon, player_rose_icon_rect)
+
+        if selected_player == 'Treddo':
+            pygame.draw.rect(screen, (255,0,0), player_treddo_icon_rect, 2)
+
+        elif selected_player == 'Rose':
+            pygame.draw.rect(screen, (255,0,0), player_rose_icon_rect, 2)
+
+
+
+
+
         #displays the menu button
         screen.blit(menu_button, menu_button_rect)
+
+        #displays the play game button
+        screen.blit(play_game_button, play_game_button_rect)
 
         pass
 
 
 
-    #end of options state rendering
+    #end of CHARACTER state rendering
+
+
 
 
 
@@ -603,18 +882,33 @@ while True:
                 ground_tile_rect = pygame.Rect(tile_x, tile_y, tile_size, tile_size)
                 
                 # Check collision between player and ground tile
-                if player_image_rect.colliderect(ground_tile_rect):
+                if treddo_image_rect.colliderect(ground_tile_rect):
                     player_jumping = False
                     # Adjust player's position if there's a collision
-                    if player_image_rect.bottom > ground_tile_rect.top:
-                        player_image_rect.bottom = ground_tile_rect.top
+                    if treddo_image_rect.bottom > ground_tile_rect.top:
+                        treddo_image_rect.bottom = ground_tile_rect.top
+
+
+                if rose_image_rect.colliderect(ground_tile_rect):
+                    player_jumping = False
+                    # Adjust player's position if there's a collision
+                    if rose_image_rect.bottom > ground_tile_rect.top:
+                        rose_image_rect.bottom = ground_tile_rect.top
 
 
 
 
 
-        #load the player image
-        screen.blit(player_image, player_image_rect)
+
+        #load the player image treddo
+        if selected_player == 'Treddo':
+            screen.blit(treddo_image, treddo_image_rect)
+
+            
+        #load the player image rose
+        if selected_player == "Rose":
+            screen.blit(rose_image, rose_image_rect)
+
 
 
         #load the player healthbar display
@@ -663,6 +957,9 @@ while True:
             screen.blit(enemy_earthslime, slime_rect)
 
 
+
+
+
         # Move each slime and check if it goes off-screen
         for slime_rect in earthslime_rect_list:
             slime_rect.x -= enemy_earthslime_speed
@@ -679,7 +976,7 @@ while True:
             
             #here I am going to attempt to add in collision detection between the slime and the player.
             # Collision detection between player and enemy earth slime
-            if player_image_rect.colliderect(slime_rect):
+            if selected_player == 'Treddo' and treddo_image_rect.colliderect(slime_rect):
                 player_score -= 1
                 player_health -= 1
                 current_enemy_earthslimes -= 1
@@ -687,6 +984,16 @@ while True:
 
 
 
+            if selected_player == 'Rose' and rose_image_rect.colliderect(slime_rect):
+                player_score -= 1
+                player_health -= 1
+                current_enemy_earthslimes -= 1
+                earthslime_rect_list.remove(slime_rect)
+
+
+          
+                
+                
 
         #here I will attempt to move the earthslime
         enemy_earthslime_rect.x -= enemy_earthslime_speed
@@ -696,6 +1003,21 @@ while True:
         if enemy_earthslime_rect.right <= 0:
             enemy_earthslime_rect.bottomleft = (window_width, window_height - tile_size)
             
+
+
+
+        #shooting
+        for fireball_rect, direction in fireballs: #this is what updates the RENDERING of the fireball attacks the list of fireballs more namely.
+            fireball_rect.x += direction[0] * fireball_speed
+            fireball_rect.y += direction[1] * fireball_speed
+
+            #render the fireball
+            screen.blit(fireball_image, fireball_rect)
+
+        
+            
+            
+        
 
 
         #here I am going to provide the textual displays for the player score and player health
@@ -761,7 +1083,12 @@ while True:
 
         #resets the players values health and location
         player_health = 5
-        player_image_rect.bottomleft = (0, window_height - tile_size)
+
+        #treddo
+        #treddo_image_rect.bottomleft = (0, window_height - tile_size)
+
+        #rose
+        #rose_image_rect.bottomleft = (0, window_height - tile_size)
         
 
 
@@ -771,7 +1098,6 @@ while True:
         screen.blit(menu_button, menu_button_rect)
 
         
-
 
 
          #here I am going to provide the textual displays for the player score and player health
@@ -795,7 +1121,10 @@ while True:
     elif current_state == OPTIONS:
 
         #fills gray
-        screen.fill((155, 155, 155))
+        #screen.fill((155, 155, 155))
+        #blits the character screen art I designed onto the options background
+        screen.blit(character_art_background, (0, 0))
+
 
         #displays the menu buttons for now
         screen.blit(menu_button, menu_button_rect)
